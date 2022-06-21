@@ -5,6 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-<h1>HELLO</h1>
+{{ sec_num }}
+<p>Guess 4 numbers. Enter them separated with spaces:</p>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type="text" name="user_num"/>
+            <input type="submit" value="Send"/>
+        </form>
+<br>
+
+{{ error }}
+{{ res }}
 </body>
 </html>

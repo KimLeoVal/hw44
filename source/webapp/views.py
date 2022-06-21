@@ -1,42 +1,43 @@
+from urllib.parse import parse_qs
+
 from django.shortcuts import render
-import random
+
+from webapp import checker
+
+n = 4
+secret_nums = checker.Check()
+secret_nums = secret_nums.generate_numbers(n)
 
 
 def index_view(request):
     if request.method == 'GET':
-        return render(request, 'index.html')
+        context = {'sec_num': secret_nums}
+        return render(request, 'index.html', context)
 
-
-class Check:
-    def generate_numbers(self, N):
-        nums2 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        secret_nums = random.sample(nums2, N)
-        return secret_nums
-
-    def checker_list(self, get_nums):
-        if len(get_nums) == 4:
-            if len(get_nums) == len(set(get_nums)):
-                for i in get_nums:
-                    if 0 < i < 10:
-                        return get_nums
-                    else:
-                        raise ValueError
-            else:
-                raise ValueError
-        else:
-            raise ValueError
-
-    def checker_game(self, get_nums, secret_nums):
-
-        while True:
-            bulls = 0
-            cows = 0
-            for i in get_nums:
-                for j in secret_nums:
-                    if i == j and get_nums.index(i) == secret_nums.index(j):
-                        bulls += 1
-                        if bulls == 4:
-                            return f'Congratulations, you won!'
-                    elif i == j and get_nums.index(i) != secret_nums.index(j):
-                        cows += 1
-            return f'You have got {bulls} bulls and {cows} cows.'
+    if request.method == 'POST':
+        int_num = []
+        try:
+            num = request.POST.get('user_num')
+            num = num.split(" ")
+            num = list(num)
+            try:
+                for i in num:
+                    i = int(i)
+                    int_num.append(i)
+            except ValueError:
+                context = {'error': "Enter 4 different numbers from 1 to 9"}
+                return render(request, 'index.html', context)
+            try:
+                check_num = checker.Check()
+                if check_num.checker_list(int_num):
+                    game = checker.Check()
+                    res = game.checker_game(int_num, secret_nums)
+                    context = {'res': res
+                       }
+            except ValueError:
+                context = {'error': "Enter 4 different numbers from 1 to 9"}
+                return render(request, 'index.html', context)
+        except ValueError:
+            context = {'error': "You didn't enter anything"}
+            return render(request, 'index.html', context)
+        return render(request, 'index.html', context)
