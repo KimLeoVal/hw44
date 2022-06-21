@@ -5,8 +5,14 @@
     <title>Title</title>
 </head>
 <body>
-HISTORY
+{% for i in num_list  %}
+    Step: {{ forloop.counter }}
+    <br>
+    User Numbers :{{ i }}
+    <br>
+{% endfor %}
 
-{{ yser_num }}
+
+
 </body>
 </html>
